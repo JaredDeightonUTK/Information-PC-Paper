@@ -90,7 +90,7 @@ def I_spike(pc, dist):
     return norm_info
 
 
-def I_sec_joint_fast(pc, dist): 
+def I_sec_joint(pc, dist): 
     ''' Calculate Spatial Information Rate of joint distribution defined by neuron pairs(bits/spike)
     
     Parameters
@@ -145,7 +145,7 @@ def I_sec_joint_fast(pc, dist):
 
     return J 
 
-def I_spike_joint_fast(pc, dist): 
+def I_spike_joint(pc, dist): 
     
     pc = pc.to(device)
     dist = dist.to(device)

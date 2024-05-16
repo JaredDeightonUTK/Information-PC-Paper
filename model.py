@@ -149,7 +149,7 @@ class RNN(torch.nn.Module):
         
         dist = self.dist
         
-        J = pc_info.I_spike_joint_fast(preds, dist) 
+        J = pc_info.I_spike_joint(preds, dist) 
         
         # J = J * (1 - torch.eye(Np, Np)) # Remove diagonal entries
         
@@ -200,7 +200,7 @@ class RNN(torch.nn.Module):
         
         preds = preds.to(self.device)
         
-        J = pc_info.I_spike_joint_fast(preds, dist) 
+        J = pc_info.I_spike_joint(preds, dist) 
         
         J = J.mean(dim = 0).to(self.device)
         
@@ -228,7 +228,7 @@ class RNN(torch.nn.Module):
         
         dist = self.dist
         
-        J = pc_info.I_sec_joint_fast(preds, dist) 
+        J = pc_info.I_sec_joint(preds, dist) 
         
         I_loss = -1/2*torch.mean(J.mean(dim = 0) + eps)
         
@@ -251,7 +251,7 @@ class RNN(torch.nn.Module):
         
         dist = self.dist
         
-        J = pc_info.I_sec_joint_fast(preds, dist)
+        J = pc_info.I_sec_joint(preds, dist)
         
         J = J.mean(dim = 0).to(self.device)
         
