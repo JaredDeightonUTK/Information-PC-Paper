@@ -122,7 +122,7 @@ torch.save(model.state_dict(), options.save_dir + options.run_ID +'/pre-trained_
 
 model.train()
 
-trainer.train(n_epochs = options.n_epochs, n_steps = options.n_steps)  
+trainer.train(n_epochs = options.n_epochs, n_steps = options.n_steps, stopping_criterion=True)  
 
 print('Model trained!')
 

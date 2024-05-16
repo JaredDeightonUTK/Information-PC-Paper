@@ -1,7 +1,5 @@
 import torch
 import numpy as np
-
-from visualize import save_ratemaps
 import os
 
 class Trainer(object):
@@ -12,9 +10,7 @@ class Trainer(object):
         self.trajectory_generator = trajectory_generator
         lr = self.options.learning_rate
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
-        # self.optimizer = torch.optim.RMSprop(self.model.parameters(), lr = lr)
-        # self.optimizer = torch.optim.SGD(self.model.parameters(), lr=lr)
-
+        
         self.loss = []
         self.err = []
         self.val_loss = []
@@ -114,17 +110,6 @@ class Trainer(object):
                             visited_positions = init_pos.squeeze(1) + cumulative_v
                 
                             place_cell_outputs = self.model.predict(inputs) # sequence_length x batch_size x Np
-                
-# =============================================================================
-#                             # Vectorized standardization
-#                             mean_vals = torch.mean(place_cell_outputs, dim=(0, 1))
-#                             std_vals = torch.std(place_cell_outputs, dim=(0, 1))
-#                             std_vals = torch.where(std_vals > 0, std_vals, torch.ones_like(std_vals))
-#                             place_cell_outputs = 1 + (place_cell_outputs - mean_vals) / std_vals
-#                             
-#                             place_cell_outputs = torch.relu(place_cell_outputs)
-# =============================================================================
-
 
                             # Min-Max Scaling
                             min_vals = torch.min(place_cell_outputs.view(-1), dim=0)[0]
@@ -134,10 +119,8 @@ class Trainer(object):
                             denom = max_vals - min_vals + 1e-6
                             place_cell_outputs = (place_cell_outputs - min_vals) / denom
 
-
-
-                            # self.model.place_cell_outputs = place_cell_outputs
-                            # self.model.visited_positions = visited_positions
+                            self.model.place_cell_outputs = place_cell_outputs
+                            self.model.visited_positions = visited_positions
 
                 
 
@@ -155,11 +138,4 @@ class Trainer(object):
                 torch.save(self.model.state_dict(), os.path.join(self.ckpt_dir,
                                                                  'most_recent_model.pth'))
 
-                # Save a picture of rate maps
-# =============================================================================
-#                 save_ratemaps(self.model, self.trajectory_generator,
-#                               self.options, step=epoch_idx)
-#                 
-#                 
-# =============================================================================
 

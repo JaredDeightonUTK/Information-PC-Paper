@@ -2,8 +2,6 @@
 import torch
 import numpy as np
 
-F = torch.nn.Softmax(dim = 1)
-
 class TrajectoryGenerator(object):
 
     def __init__(self, options, place_cells, model, seed = None):

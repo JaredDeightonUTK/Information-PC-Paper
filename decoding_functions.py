@@ -113,7 +113,7 @@ def get_bin_decoding_acc(p, pos, train_num = 10000, test_num = 1000, test_size =
     pos_train_binned = np.array(pos_train_binned)
     pos_test_binned = np.array(pos_test_binned)
     
-    train_acc = sum(train_predictions == pos_train_binned)/pos_train_binned.shape[0]
+    # train_acc = sum(train_predictions == pos_train_binned)/pos_train_binned.shape[0]
     test_acc = sum(test_predictions == pos_test_binned)/pos_test_binned.shape[0]
     
     if plot:

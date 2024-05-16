@@ -56,7 +56,7 @@ for i in range(num_trials):
     
     model.train()
     
-    trainer.train(n_epochs = options.n_epochs, n_steps = options.n_steps)  
+    trainer.train(n_epochs = options.n_epochs, n_steps = options.n_steps, stopping_criterion=True)  
     
     print('Model trained!')
     

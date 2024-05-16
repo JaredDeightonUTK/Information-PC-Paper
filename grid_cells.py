@@ -1,6 +1,6 @@
 import numpy as np
 import torch
-import scipy
+
 
 class GridCells(object):
 
@@ -53,47 +53,3 @@ class GridCells(object):
     
         return outputs
 
-    def grid_gc(self, gc_outputs, pos, res=32):
-        ''' Interpolate grid cell outputs onto a grid'''
-        coordsx = np.linspace(-self.box_width/2, self.box_width/2, res)
-        coordsy = np.linspace(-self.box_height/2, self.box_height/2, res)
-        grid_x, grid_y = np.meshgrid(coordsx, coordsy)
-        grid = np.stack([grid_x.ravel(), grid_y.ravel()]).T
-
-        # Convert to numpy
-        gc_outputs = gc_outputs.reshape(-1, self.Ng)
-        pos = pos.reshape(-1, 2)
-        T = gc_outputs.shape[0] #T vs transpose? What is T? (dim's?)
-        gc = np.zeros([T, res, res])
-        
-        
-        for i in range(self.Ng):
-            gridval = scipy.interpolate.griddata(pos, gc_outputs[:,i], grid)
-            gc[i] = gridval.reshape([res, res])
-        
-        return gc
-
-    def compute_covariance(self, res=30):
-        '''Compute spatial covariance matrix of grid cell outputs'''
-        pos = np.array(np.meshgrid(np.linspace(-self.box_width/2, self.box_width/2, res),
-                         np.linspace(-self.box_height/2, self.box_height/2, res))).T
-
-        pos = torch.tensor(pos)
-        
-        # Put on GPU if available
-        pos = pos.to(self.device)
-
-        #Maybe specify dimensions here again?
-        gc_outputs = self.get_activation(pos).reshape(-1,self.Ng).cpu()
-
-        C = gc_outputs@gc_outputs.T
-        Csquare = C.reshape(res,res,res,res)
-
-        Cmean = np.zeros([res,res])
-        for i in range(res):
-            for j in range(res):
-                Cmean += np.roll(np.roll(Csquare[i,j], -i, axis=0), -j, axis=1)
-                
-        Cmean = np.roll(np.roll(Cmean, res//2, axis=0), res//2, axis=1)
-
-        return Cmean
