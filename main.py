@@ -9,7 +9,6 @@ from trainer import Trainer
 from place_cells import PlaceCells as PC
 from grid_cells import GridCells as GC
 
-
 import argparse
 import numpy as np
 
