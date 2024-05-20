@@ -1,10 +1,10 @@
-# Containing functions for calculating PC spatial entropy/information and spatial mutual information, eventually muti-mutual information
+# Containing functions for calculating PC spatial information 
 import torch
 import torch.nn as nn
 
 relu = nn.ReLU()
 
-eps = 1e-10
+eps = 1e-10 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 def I_sec(pc, dist):
@@ -18,7 +18,7 @@ def I_sec(pc, dist):
 
     Returns
     -------
-    info_per_cell : information (bits/sec) of each place cell across sequences of shape [Np]
+    info_per_cell : information (bits/sec) of each place cell across sequences of shape [batch_size, Np]
         
     '''
     
@@ -58,7 +58,7 @@ def I_spike(pc, dist):
     
     Returns
     -------
-    norm_info : information (bits/spike) of each place cell across sequences of shape [Np]
+    norm_info : information (bits/spike) of each place cell across sequences of shape [batch_size, Np]
         
     '''
     
@@ -91,7 +91,7 @@ def I_spike(pc, dist):
 
 
 def I_sec_joint(pc, dist): 
-    ''' Calculate Spatial Information Rate of joint distribution defined by neuron pairs(bits/spike)
+    ''' Calculate Spatial Information Rate of joint distribution defined by neuron pairs (bits/sec)
     
     Parameters
     ----------
@@ -100,7 +100,7 @@ def I_sec_joint(pc, dist):
     
     Returns
     -------
-    J : Average information (bits/s) of each joint place cell pair across sequences/batches, of shape [Np, Np]. J[i,j] is joint info between pc_i and pc_j
+    J : Information (bits/s) of each joint place cell pair, of shape [batch_size, Np, Np]. J[b, i, j] is joint info between pc_i and pc_j in batch b
         
     '''
     
@@ -146,6 +146,18 @@ def I_sec_joint(pc, dist):
     return J 
 
 def I_spike_joint(pc, dist): 
+    ''' Calculate Spatial Information Rate of joint distribution defined by neuron pairs (bits/spike)
+    
+    Parameters
+    ----------
+    pc : place cell activations with shape [sequence_length, batch_size, Np]
+    dist : probablilities across trajectory of space [sequence_length]
+    
+    Returns
+    -------
+    J : Information (bits/s) of each joint place cell pair, of shape [batch_size, Np, Np]. J[b, i, j] is joint info between pc_i and pc_j in batch b
+        
+    '''
     
     pc = pc.to(device)
     dist = dist.to(device)
@@ -170,7 +182,6 @@ def I_spike_joint(pc, dist):
     la = (dist.view(Nx, 1, 1, 1) * pc1).sum(dim=0)
     lb = (dist.view(Nx, 1, 1, 1) * pc2).sum(dim=0)
     
-    # alpha = (dist.view(Nx, 1, 1, 1) * ((pc1 + pc2) / 2)).sum(dim=0)
     alpha = (la + lb) / 2
     
     r_expanded = r_matrix_batch.unsqueeze(0).repeat(Nx, 1, 1, 1)
