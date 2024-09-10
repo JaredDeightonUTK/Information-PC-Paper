@@ -17,7 +17,7 @@ torch.manual_seed(14)
 
 print('Cuda:', torch.cuda.is_available())
 
-def run(arena_size, learning_rate, sequence_length, batch_size, num_hidden, loss, num_trials):
+def run(Np, arena_size, learning_rate, sequence_length, batch_size, num_hidden, loss, num_trials):
     options = Options()
 
     options.n_epochs = 1          # number of training epochs
@@ -25,7 +25,7 @@ def run(arena_size, learning_rate, sequence_length, batch_size, num_hidden, loss
     options.batch_size = batch_size      # number of trajectories per batch
     options.sequence_length = sequence_length  # number of steps in trajectory
     options.learning_rate = learning_rate  # gradient descent learning rate
-    options.Np = 64            # number of place cells
+    options.Np = Np            # number of place cells
     options.Ng = num_hidden             # number of grid cells
     options.place_cell_rf = 0.12  # width of place cell center tuning curve (m)
     options.surround_scale = 2    # if DoG, ratio of sigma2^2 to sigma1^2
@@ -43,7 +43,7 @@ def run(arena_size, learning_rate, sequence_length, batch_size, num_hidden, loss
     options.loss_fn  = loss
 
     for i in range(num_trials):
-        options.save_dir = 'sensitivity' + '_Np' + str(options.Np) + '/' + options.loss_fn + '/'
+        options.save_dir = 'sensitivity_pt2' + '_Np' + str(options.Np) + '/' + options.loss_fn + '/'
         options.run_ID = generate_run_ID(options) + '_' + 'lr_' + str(learning_rate) + '_' + str(i)
         
         folder_name = options.save_dir + options.run_ID
@@ -161,15 +161,30 @@ def run(arena_size, learning_rate, sequence_length, batch_size, num_hidden, loss
         np.save(folder_name + '/pos_og.npy', pos_og)
         
 
-num_trained = 0
-for arena_size in [0.25, 0.75, 1, 1.5]:
-    for learning_rate in [1e-3, 1e-4, 1e-5]:
-        for sequence_length in [40, 80, 120]:
-            for batch_size in [10, 40, 80]:
-                for num_hidden in [512, 1028, 2048]: #[256, 512, 1028] with Np=32:
-                    for loss in ['Skaggs_loss', 'Eigen_I_loss']:
-                        print('Number of models trained: ', num_trained, '/', 1944)
-                        run(arena_size, learning_rate, sequence_length, batch_size, num_hidden, loss, num_trials = 3)
-                        num_trained += 3
+# =============================================================================
+# num_trained = 0
+# Np = 32
+# for arena_size in [0.25, 0.75, 1, 1.5]:
+#     for learning_rate in [1e-3, 1e-4, 1e-5]:
+#         for sequence_length in [40, 80, 120]:
+#             for batch_size in [10, 40, 80]:
+#                 for num_hidden in [512, 1028, 2048]: #[256, 512, 1028] with Np=32:
+#                     for loss in ['Skaggs_loss', 'Eigen_I_loss']:
+#                         print('Number of models trained: ', num_trained, '/', 1944)
+#                         run(Np, arena_size, learning_rate, sequence_length, batch_size, num_hidden, loss, num_trials = 3)
+#                         num_trained += 3
+# =============================================================================
                         
+num_trained = 0
+for Np in [32,64]:
+    for arena_size in [0.25, 0.75, 1, 1.5, 3]:
+        for learning_rate in [1e-3, 1e-4, 1e-5]:
+            for sequence_length in [40, 80, 120, 200]:
+                for batch_size in [10, 40, 80]:
+                    for num_hidden in [256, 512, 1028, 2048]: #[256, 512, 1028] with Np=32:
+                        for loss in ['Skaggs_loss', 'Eigen_I_loss']:
+                            print('Parameters:', Np, arena_size, learning_rate, sequence_length, batch_size, num_hidden, loss)
+                            print('Number of models trained: ', num_trained, '/', 8640)
+                            run(Np, arena_size, learning_rate, sequence_length, batch_size, num_hidden, loss, num_trials = 3)
+                            num_trained += 3
                             
