@@ -16,4 +16,6 @@ Section 3.2 of the paper.
 
 -- [place_cells.py](https://github.com/JaredDeightonUTK/Information-PC-Paper/blob/main/place_cells.py) contains the place cell class, used to embed the initial position into the RNN. 
 
--- [grid_cells.py](https://github.com/JaredDeightonUTK/Information-PC-Paper/blob/main/grid_cells.py) contains the grid cell class, (optionally) used to force grid cell activations in the hidden layer. None of the models/results in the paper rely upon this, but it may be explored by using -- hardcoded_gcs True in a model. 
+-- [grid_cells.py](https://github.com/JaredDeightonUTK/Information-PC-Paper/blob/main/grid_cells.py) contains the grid cell class, (optionally) used to force grid cell activations in the hidden layer. None of the models/results in the paper rely upon this, but it may be explored by using -- hardcoded_gcs True in a model.
+
+-- [sensitivity.py](https://github.com/JaredDeightonUTK/Information-PC-Paper/blob/main/sensitivity.py) contains a script for running the sensitivity analysis and recording saving the results.
