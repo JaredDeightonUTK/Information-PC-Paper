@@ -63,7 +63,7 @@ def run(Np, arena_size, learning_rate, sequence_length, batch_size, num_hidden, 
         trainer = Trainer(options, model, trajectory_generator, restore = False)
         
         np.save(folder_name  + '/options.npy', options) 
-        torch.save(model.state_dict(), folder_name +'/pre-trained_model.pth' )
+        #torch.save(model.state_dict(), folder_name +'/pre-trained_model.pth' )
         
         model.train()
         
@@ -74,13 +74,13 @@ def run(Np, arena_size, learning_rate, sequence_length, batch_size, num_hidden, 
         print('Model trained!')
         
         
-        train_loss = np.array(trainer.loss)
-        test_loss = np.array(trainer.val_loss)
+        # train_loss = np.array(trainer.loss)
+        # test_loss = np.array(trainer.val_loss)
         
-        np.save(folder_name + '/train_loss.npy', train_loss)
-        np.save(folder_name + '/test_loss.npy', test_loss)
+        # np.save(folder_name + '/train_loss.npy', train_loss)
+        # np.save(folder_name + '/test_loss.npy', test_loss)
         
-        torch.save(model.state_dict(), folder_name +'/trained_model.pth' )
+        # torch.save(model.state_dict(), folder_name +'/trained_model.pth' )
         
         
         trajectory_generator = TrajectoryGenerator(options, place_cells, model)
@@ -94,71 +94,73 @@ def run(Np, arena_size, learning_rate, sequence_length, batch_size, num_hidden, 
         activations_og, rate_map_og, p_og, pos_og, pcscores_og = compute_ratemaps_pc(pre_trained_model, trajectory_generator_pretrained, options, res = res, n_avg = n_avg, Np = Np)
         activations, rate_map, p, pos, pcscores = compute_ratemaps_pc(model, trajectory_generator, options, res = res, n_avg = n_avg, Np = Np)
         
-        smooth_activations = np.zeros_like(activations)
-
-        for i in range(activations.shape[0]):
-            im = activations[i]
-            smooth_activations[i] = cv2.GaussianBlur(im, (3,3), sigmaX=1, sigmaY=0)
+# =============================================================================
+#         smooth_activations = np.zeros_like(activations)
+# 
+#         for i in range(activations.shape[0]):
+#             im = activations[i]
+#             smooth_activations[i] = cv2.GaussianBlur(im, (3,3), sigmaX=1, sigmaY=0)
+#             
+#             
+#         smooth_p = np.zeros_like(p)
+# 
+#         for i in range(pos.shape[0]):
+#             x = (pos[i, 0] + options.box_width/2) / (options.box_width) * res
+#             y = (pos[i, 1] + options.box_height/2) / (options.box_height) * res
+#             
+#             if x < 0:
+#                 x = 0
+#             if x >= res:
+#                 x = res - 1
+#                 
+#             if y < 0:
+#                 y = 0
+#             if y >= res:
+#                 y = res - 1
+#             
+#             smooth_p[i,:] = smooth_activations[:, int(x), int(y)]
+#         
+#         smooth_activations_og = np.zeros_like(activations_og)
+# 
+#         for i in range(activations.shape[0]):
+#             im = activations_og[i]
+#             smooth_activations_og[i] = cv2.GaussianBlur(im, (3,3), sigmaX=1, sigmaY=0)
+# 
+#         smooth_p_og = np.zeros_like(p_og)
+# 
+#         for i in range(pos_og.shape[0]):
+#             x = (pos_og[i, 0] + options.box_width/2) / (options.box_width) * res
+#             y = (pos_og[i, 1] + options.box_height/2) / (options.box_height) * res
+#             
+#             if x < 0:
+#                 x = 0
+#             if x >= res:
+#                 x = res - 1
+#                 
+#             if y < 0:
+#                 y = 0
+#             if y >= res:
+#                 y = res - 1
+#             
+#             smooth_p_og[i,:] = smooth_activations_og[:, int(x), int(y)]
+# =============================================================================
             
             
-        smooth_p = np.zeros_like(p)
-
-        for i in range(pos.shape[0]):
-            x = (pos[i, 0] + options.box_width/2) / (options.box_width) * res
-            y = (pos[i, 1] + options.box_height/2) / (options.box_height) * res
-            
-            if x < 0:
-                x = 0
-            if x >= res:
-                x = res - 1
-                
-            if y < 0:
-                y = 0
-            if y >= res:
-                y = res - 1
-            
-            smooth_p[i,:] = smooth_activations[:, int(x), int(y)]
-        
-        smooth_activations_og = np.zeros_like(activations_og)
-
-        for i in range(activations.shape[0]):
-            im = activations_og[i]
-            smooth_activations_og[i] = cv2.GaussianBlur(im, (3,3), sigmaX=1, sigmaY=0)
-
-        smooth_p_og = np.zeros_like(p_og)
-
-        for i in range(pos_og.shape[0]):
-            x = (pos_og[i, 0] + options.box_width/2) / (options.box_width) * res
-            y = (pos_og[i, 1] + options.box_height/2) / (options.box_height) * res
-            
-            if x < 0:
-                x = 0
-            if x >= res:
-                x = res - 1
-                
-            if y < 0:
-                y = 0
-            if y >= res:
-                y = res - 1
-            
-            smooth_p_og[i,:] = smooth_activations_og[:, int(x), int(y)]
-            
-            
-        np.save(folder_name +'/p.npy', p)
-        np.save(folder_name + '/smooth_p.npy', smooth_p)
-        np.save(folder_name + '/activations.npy', activations)
-        np.save(folder_name + '/smooth_activations.npy', smooth_activations)
+        #np.save(folder_name +'/p.npy', p)
+        #np.save(folder_name + '/smooth_p.npy', smooth_p)
+        #np.save(folder_name + '/activations.npy', activations)
+        #np.save(folder_name + '/smooth_activations.npy', smooth_activations)
         np.save(folder_name + '/pcsores.npy', pcscores)
-        np.save(folder_name + '/pos.npy', pos)
+        #np.save(folder_name + '/pos.npy', pos)
 
     
         
-        np.save(folder_name + '/p_og.npy', p_og)
-        np.save(folder_name + '/smooth_p_og.npy', smooth_p_og)
-        np.save(folder_name + '/activations_og.npy', activations_og)
-        np.save(folder_name + '/smooth_activations_og.npy', smooth_activations_og)
+        #np.save(folder_name + '/p_og.npy', p_og)
+        #np.save(folder_name + '/smooth_p_og.npy', smooth_p_og)
+        #np.save(folder_name + '/activations_og.npy', activations_og)
+        #np.save(folder_name + '/smooth_activations_og.npy', smooth_activations_og)
         np.save(folder_name + '/pcsores_og.npy', pcscores_og)
-        np.save(folder_name + '/pos_og.npy', pos_og)
+        #np.save(folder_name + '/pos_og.npy', pos_og)
         
 
 # =============================================================================
