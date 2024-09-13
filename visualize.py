@@ -170,8 +170,9 @@ def compute_ratemaps_pc(model, trajectory_generator, options, res=20, n_avg=None
     
     pcscores = []
     for i in range(Np):
-        im = (activations[i,:,:] - np.min(activations[i,:,:])) / (np.max(activations[i,:,:]) - np.min(activations[i,:,:]))
-        pcscores.append(placescores.pc_score(im, 0.1))
+        if (np.max(activations[i,:,:]) - np.min(activations[i,:,:])) > 0:
+            im = (activations[i,:,:] - np.min(activations[i,:,:])) / (np.max(activations[i,:,:]) - np.min(activations[i,:,:]))
+            pcscores.append(placescores.pc_score(im, 0.1))
     
     return activations, rate_map, p, pos, pcscores
 
