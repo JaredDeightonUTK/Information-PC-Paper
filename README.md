@@ -19,3 +19,12 @@ Section 3.2 of the paper.
 -- [grid_cells.py](https://github.com/JaredDeightonUTK/Information-PC-Paper/blob/main/grid_cells.py) contains the grid cell class, (optionally) used to force grid cell activations in the hidden layer. None of the models/results in the paper rely upon this, but it may be explored by using -- hardcoded_gcs True in a model.
 
 -- [sensitivity.py](https://github.com/JaredDeightonUTK/Information-PC-Paper/blob/main/sensitivity.py) contains a script for running the sensitivity analysis and recording saving the results.
+
+Please cite this code via: 
+
+@article{deighton2024higher,
+  title={Higher-Order Spatial Information for Self-Supervised Place Cell Learning},
+  author={Deighton, Jared and Mackey, Wyatt and Schizas, Ioannis and Boothe Jr, David L and Maroulas, Vasileios},
+  journal={arXiv preprint arXiv:2407.06195},
+  year={2024}
+}
