@@ -1,9 +1,6 @@
-@article{deighton2024higherorderspatialinformationselfsupervised,
+@article{deighton2024higher,
   title={Higher-Order Spatial Information for Self-Supervised Place Cell Learning},
-  author={Jared Deighton},
-  year={2024},
-  eprint={2407.06195},
-  archivePrefix={arXiv},
-  primaryClass={q-bio.NC},
-  url={https://arxiv.org/abs/2407.06195}
+  author={Deighton, Jared and Mackey, Wyatt and Schizas, Ioannis and Boothe Jr, David L and Maroulas, Vasileios},
+  journal={arXiv preprint arXiv:2407.06195},
+  year={2024}
 }
