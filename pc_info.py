@@ -206,5 +206,99 @@ def I_spike_joint(pc, dist):
 
     return J 
 
+def Rdn(pc, dist):
+    ''' Calculate Redundancy 
+    
+    
+    Parameters
+    ----------
+    pc : place cell activations with shape [sequence_length, batch_size, Np]
+    dist : probablilities across trajectory of space [sequence_length]
+    
+    Returns
+    -------
+    R : Redundancy (bits/s) of each place cell pair, of shape [batch_size, Np, Np]. R[b, i, j] is redundancy between pc_i and pc_j in batch b
+        
+    '''
+    
+    pc = pc.to(device)
+    dist = dist.to(device)
+    
+    Nx, batch_size, Np = pc.shape
+    R = torch.zeros(batch_size, Np, Np).to(device)
+    
+    # Precompute rates
+    spike_rate_per_cell = (pc * dist.view(-1, 1, 1)).sum(dim=0) 
+    safe_rate = torch.where(spike_rate_per_cell > eps, spike_rate_per_cell, eps * torch.ones_like(spike_rate_per_cell))
+    # Normalize PC activations
+    pc_normalized = pc / safe_rate.unsqueeze(0) 
 
+    # Compute log terms safely
+    log_term = torch.log2(pc_normalized + eps) 
+
+    info_matrix = pc_normalized * log_term  
+    for i in range(Np):
+        for j in range(Np):
+            min_info = torch.min(info_matrix[:, :, i], info_matrix[:,:, j])*dist.view(-1,1)  # [batch_size]
+            R[:, i, j] = min_info.sum(dim = 0)
+
+    return R
+
+def Syn(pc, dist):
+    ''' Calculate Synergy 
+    
+    
+    Parameters
+    ----------
+    pc : place cell activations with shape [sequence_length, batch_size, Np]
+    dist : probablilities across trajectory of space [sequence_length]
+    
+    Returns
+    -------
+    Synergy : Synergy of each place cell pair, of shape [batch_size, Np, Np]. Synergy[b, i, j] is synergy between pc_i and pc_j in batch b
+        
+    '''
+    
+    pc = pc.to(device)
+    dist = dist.to(device)
+    
+    Nx, batch_size, Np = pc.shape
+    Synergy = torch.zeros(batch_size, Np, Np).to(device)
+    J = I_spike_joint(pc, dist)
+    R = Rdn(pc, dist)
+    Skaggs = I_spike(pc, dist)
+    for i in range(Np):
+        for j in range(Np):
+            Synergy[:, i, j] = J[:,i,j] - Skaggs[:,i] - Skaggs[:,j] + R[:,i,j]
+
+    return Synergy
+        
+
+def RS_index(pc, dist):
+    ''' Calculate Redundacy-Synergy index
+    
+    
+    Parameters
+    ----------
+    pc : place cell activations with shape [sequence_length, batch_size, Np]
+    dist : probablilities across trajectory of space [sequence_length]
+    
+    Returns
+    -------
+    RS : Redundacy-Synergy index of each place cell pair, of shape [batch_size, Np, Np]. RS[b, i, j] is Redundacy-Synergy index between pc_i and pc_j in batch b
+        
+    '''
+    
+    pc = pc.to(device)
+    dist = dist.to(device)
+    
+    Nx, batch_size, Np = pc.shape
+    RS = torch.zeros(batch_size, Np, Np).to(device)
+    J = I_spike_joint(pc, dist)
+    Skaggs = I_spike(pc, dist)
+    for i in range(Np):
+        for j in range(Np):
+            RS[:, i, j] = J[:,i,j] - Skaggs[:,i] - Skaggs[:,j] 
+
+    return RS
 
